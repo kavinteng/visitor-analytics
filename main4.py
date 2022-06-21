@@ -66,7 +66,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
 
     W = None
     H = None
-    ct = CentroidTracker(maxDisappeared=8, maxDistance=90)
+    ct = CentroidTracker(maxDisappeared=5, maxDistance=90)
     trackers = []
     trackableObjects = {}
     totalFrames = 0
@@ -94,7 +94,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
             st = time.time()
         et = time.time()
 
-        if et - st > 0.1:
+        if et - st > 0.15:
             # if totalFrames % 2 == 0:
             trackers = []
 
@@ -142,8 +142,8 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
                 rects.append((startX, startY, endX, endY))
 
             cv2.line(frame, ((W // 2) + 0, 0), ((W // 2) + 0, H), (0, 0, 0), 3)
-            cv2.line(frame, ((W // 2) - 100, 0), ((W // 2) - 100, H), (0, 0, 0), 3)
-            cv2.line(frame, ((W // 2) + 100, 0), ((W // 2) + 100, H), (0, 0, 0), 3)
+            # cv2.line(frame, ((W // 2) - 100, 0), ((W // 2) - 100, H), (0, 0, 0), 3)
+            # cv2.line(frame, ((W // 2) + 100, 0), ((W // 2) + 100, H), (0, 0, 0), 3)
 
             boundingboxes = np.array(rects)
             boundingboxes = boundingboxes.astype(int)
