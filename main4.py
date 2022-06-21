@@ -3,6 +3,7 @@ import numpy as np
 from mylib.centroidtracker import CentroidTracker
 from mylib.trackableobject import TrackableObject
 from threading import Thread
+import requests
 
 def non_max_suppression_fast(boxes, overlapThresh):
     try:
@@ -59,6 +60,9 @@ def create_folder():
     if os.path.isdir(date_vdo) == False:
         os.mkdir(date_vdo)
 
+def request_post():
+
+
 def main(rtsp,device,save_video = False,cap_person_roi = False):
     cap = cv2.VideoCapture(rtsp)
     st = None
@@ -66,7 +70,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
 
     W = None
     H = None
-    ct = CentroidTracker(maxDisappeared=5, maxDistance=90)
+    ct = CentroidTracker(maxDisappeared=1, maxDistance=90)
     trackers = []
     trackableObjects = {}
     totalFrames = 0
@@ -235,7 +239,7 @@ if __name__ == '__main__':
                    save_video=False,
                    cap_person_roi=False)
 
-    # main_threading(rtsp='rtsp://admin:888888@192.168.7.50:10554/tcp/av0_0',
-    #                device=2,
-    #                save_video=False,
-    #                cap_person_roi=False)
+    main_threading(rtsp='rtsp://admin:888888@192.168.7.50:10554/tcp/av0_0',
+                   device=2,
+                   save_video=False,
+                   cap_person_roi=False)
