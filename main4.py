@@ -162,12 +162,12 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
                     to.centroids.append(centroid)
 
                     if not to.counted:
-                        if direction < -10 and ((W_roi // 2) - 100 < centroid[0] < W_roi // 2):
+                        if direction < -20 and ((W_roi // 2) - 100 < centroid[0] < W_roi // 2):
                             totalin += 1
                             print(objectID,direction)
                             to.counted = True
 
-                        elif direction > 10 and ((W_roi // 2) + 100 > centroid[0] > W_roi // 2):
+                        elif direction > 20 and ((W_roi // 2) + 100 > centroid[0] > W_roi // 2):
                             totalout += 1
                             print(objectID,direction)
                             to.counted = True
