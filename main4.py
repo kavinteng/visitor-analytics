@@ -94,7 +94,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
             st = time.time()
         et = time.time()
 
-        if et - st > 0.1:
+        if et - st > 0.15:
             # if totalFrames % 2 == 0:
             trackers = []
 
