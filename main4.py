@@ -141,8 +141,8 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
                 rects.append((startX, startY, endX, endY))
 
             cv2.line(frame, ((W // 2) + 0, 0), ((W // 2) + 0, H), (0, 0, 0), 3)
-            cv2.line(frame, ((W // 2) - 10, 0), ((W // 2) - 10, H), (0, 0, 0), 3)
-            cv2.line(frame, ((W // 2) + 10, 0), ((W // 2) + 10, H), (0, 0, 0), 3)
+            cv2.line(frame, ((W // 2) - 30, 0), ((W // 2) - 30, H), (0, 0, 0), 3)
+            cv2.line(frame, ((W // 2) + 30, 0), ((W // 2) + 30, H), (0, 0, 0), 3)
 
             boundingboxes = np.array(rects)
             boundingboxes = boundingboxes.astype(int)
@@ -161,11 +161,11 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
                     to.centroids.append(centroid)
 
                     if not to.counted:
-                        if direction < 0 and ((W // 2) - 10 < centroid[0] < W // 2):
+                        if direction < 0 and ((W // 2) - 30 < centroid[0] < W // 2):
                             totalin += 1
                             to.counted = True
 
-                        elif direction > 0 and ((W // 2)+10 > centroid[0] > W // 2):
+                        elif direction > 0 and ((W // 2)+30 > centroid[0] > W // 2):
                             totalout += 1
                             to.counted = True
 
