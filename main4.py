@@ -99,7 +99,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
             trackers = []
 
             # roi = frame[0:H,int((W/2)-100):int((W/2)+100)]
-            results = model(frame, size=640)
+            results = model(frame, size=320)
 
             out2 = results.pandas().xyxy[0]
 
@@ -221,7 +221,7 @@ def main_threading(rtsp,device,save_video,cap_person_roi):
 
 if __name__ == '__main__':
     print('start load model!!!')
-    model = torch.hub.load('ultralytics/yolov5', 'yolov5l', pretrained=True)
+    model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
     model.conf = 0.2
     model.iou = 0.9
 
