@@ -100,7 +100,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
 
             roi = frame[0:H,int((W/2)-100):int((W/2)+100)]
             (H_roi, W_roi) = roi.shape[:2]
-            results = model(roi, size=320)
+            results = model(roi, size=480)
 
             out2 = results.pandas().xyxy[0]
 
@@ -162,12 +162,12 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
                     to.centroids.append(centroid)
 
                     if not to.counted:
-                        if direction < -40 and ((W_roi // 2) - 50 < centroid[0] < W_roi // 2):
+                        if direction < -10 and ((W_roi // 2) - 100 < centroid[0] < W_roi // 2):
                             totalin += 1
                             print(objectID,direction)
                             to.counted = True
 
-                        elif direction > 40 and ((W_roi // 2) + 50 > centroid[0] > W_roi // 2):
+                        elif direction > 10 and ((W_roi // 2) + 100 > centroid[0] > W_roi // 2):
                             totalout += 1
                             print(objectID,direction)
                             to.counted = True
