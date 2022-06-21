@@ -60,7 +60,7 @@ def create_folder():
     if os.path.isdir(date_vdo) == False:
         os.mkdir(date_vdo)
 
-def request_post():
+# def request_post():
 
 
 def main(rtsp,device,save_video = False,cap_person_roi = False):
