@@ -66,7 +66,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
 
     W = None
     H = None
-    ct = CentroidTracker(maxDisappeared=8, maxDistance=90)
+    ct = CentroidTracker(maxDisappeared=8, maxDistance=150)
     trackers = []
     trackableObjects = {}
     totalFrames = 0
@@ -94,7 +94,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
             st = time.time()
         et = time.time()
 
-        if et - st > 0.15:
+        if et - st > 0.2:
             # if totalFrames % 2 == 0:
             trackers = []
 
