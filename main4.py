@@ -60,10 +60,24 @@ def create_folder():
     if os.path.isdir(date_vdo) == False:
         os.mkdir(date_vdo)
 
-# def request_post():
+def request_post(person_in,url = 'https://mltest.advice.co.th/mltest/count_post.php'):
+    # data = {"data": file}
+    # text = {"Username": nameid, "Customer ID": customid, "Order ID": order,
+    #         "Tel": tel, "Box size": size, "file_type": extension, "token": encoded,
+    #         "check_success": check_success}
+    text = {'person_in': person_in,'token': 'dkjfkdsjskfa'}
+    print(text)
+    # response = requests.post(url, files=data, data=text)
+    response = requests.post(url, data=text)
+    print('------posting------')
+    if response.ok:
+        print("Upload completed successfully!")
 
+    else:
+        response.raise_for_status()
+        print("Something went wrong!")
 
-def main(rtsp,device,save_video = False,cap_person_roi = False):
+def main(rtsp,device,save_video = False,cap_person_roi = False, post_to_server = False):
     cap = cv2.VideoCapture(rtsp)
     st = None
     record = 0
@@ -79,6 +93,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
     x = []
     empty = []
     empty1 = []
+    old = 0
 
     while True:
         create_folder()
@@ -96,6 +111,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
 
         if st == None:
             st = time.time()
+            st_post = time.time()
         et = time.time()
 
         if et - st > 0.15:
@@ -187,7 +203,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
 
             info = [
                 ("Exit", totalout),
-                ("Enter", totalin),
+                ("Enter", totalin + old),
             ]
 
             for (i, (k, v)) in enumerate(info):
@@ -213,6 +229,14 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
             st = time.time()
             cv2.imshow(f'{rtsp}', frame)
 
+        if et - st_post > 60:
+            print(totalin,old)
+            if post_to_server == True:
+                request_post(totalin)
+            old += totalin
+            totalin = 0
+            st_post = time.time()
+
         k = cv2.waitKey(1)
         if k == ord('q'):
             break
@@ -222,8 +246,8 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
         rec.release()
     cv2.destroyWindow(f'{rtsp}')
 
-def main_threading(rtsp,device,save_video,cap_person_roi):
-    t1 = Thread(target=main, args=(rtsp,device,save_video,cap_person_roi,))
+def main_threading(rtsp,device,save_video,cap_person_roi,post_to_server):
+    t1 = Thread(target=main, args=(rtsp,device,save_video,cap_person_roi,post_to_server,))
     t1.start()
 
 if __name__ == '__main__':
@@ -237,9 +261,11 @@ if __name__ == '__main__':
     main_threading(rtsp='rtsp://test:advice128@110.49.125.237:554/cam/realmonitor?channel=1&subtype=0',
                    device=1,
                    save_video=False,
-                   cap_person_roi=False)
+                   cap_person_roi=False,
+                   post_to_server=False)
 
     main_threading(rtsp='rtsp://admin:888888@192.168.7.50:10554/tcp/av0_0',
                    device=2,
                    save_video=False,
-                   cap_person_roi=False)
+                   cap_person_roi=False,
+                   post_to_server=False)
