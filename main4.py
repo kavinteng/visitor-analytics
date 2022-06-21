@@ -66,7 +66,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
 
     W = None
     H = None
-    ct = CentroidTracker(maxDisappeared=8, maxDistance=150)
+    ct = CentroidTracker(maxDisappeared=8, maxDistance=90)
     trackers = []
     trackableObjects = {}
     totalFrames = 0
@@ -94,12 +94,13 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
             st = time.time()
         et = time.time()
 
-        if et - st > 0.2:
+        if et - st > 0.1:
             # if totalFrames % 2 == 0:
             trackers = []
 
-            # roi = frame[0:H,int((W/2)-100):int((W/2)+100)]
-            results = model(frame, size=320)
+            roi = frame[0:H,int((W/2)-100):int((W/2)+100)]
+            (H_roi, W_roi) = roi.shape[:2]
+            results = model(roi, size=320)
 
             out2 = results.pandas().xyxy[0]
 
@@ -141,8 +142,8 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
                 rects.append((startX, startY, endX, endY))
 
             cv2.line(frame, ((W // 2) + 0, 0), ((W // 2) + 0, H), (0, 0, 0), 3)
-            cv2.line(frame, ((W // 2) - 30, 0), ((W // 2) - 30, H), (0, 0, 0), 3)
-            cv2.line(frame, ((W // 2) + 30, 0), ((W // 2) + 30, H), (0, 0, 0), 3)
+            cv2.line(frame, ((W // 2) - 100, 0), ((W // 2) - 100, H), (0, 0, 0), 3)
+            cv2.line(frame, ((W // 2) + 100, 0), ((W // 2) + 100, H), (0, 0, 0), 3)
 
             boundingboxes = np.array(rects)
             boundingboxes = boundingboxes.astype(int)
@@ -161,12 +162,14 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
                     to.centroids.append(centroid)
 
                     if not to.counted:
-                        if direction < 0 and ((W // 2) - 30 < centroid[0] < W // 2):
+                        if direction < -40 and ((W_roi // 2) - 50 < centroid[0] < W_roi // 2):
                             totalin += 1
+                            print(objectID,direction)
                             to.counted = True
 
-                        elif direction > 0 and ((W // 2)+30 > centroid[0] > W // 2):
+                        elif direction > 40 and ((W_roi // 2) + 50 > centroid[0] > W_roi // 2):
                             totalout += 1
+                            print(objectID,direction)
                             to.counted = True
 
                 trackableObjects[objectID] = to
@@ -174,9 +177,9 @@ def main(rtsp,device,save_video = False,cap_person_roi = False):
                 objectID = objectID + 1
                 # cv2.rectangle(roi, (x1 - 5, y1), (x2 - 5, y2), (0, 0, 255), 2)
                 text = "ID {}".format(objectID)
-                cv2.putText(frame, text, (centroid[0] - 10, centroid[1] - 10),
+                cv2.putText(roi, text, (centroid[0] - 10, centroid[1] - 10),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-                cv2.circle(frame, (centroid[0], centroid[1]), 4, (0, 0, 255), -1)
+                cv2.circle(roi, (centroid[0], centroid[1]), 4, (0, 0, 255), -1)
 
             info = [
                 ("Exit", totalout),
