@@ -60,24 +60,54 @@ def create_folder():
     if os.path.isdir(date_vdo) == False:
         os.mkdir(date_vdo)
 
-def request_post(person_in,url = 'https://mltest.advice.co.th/mltest/count_post.php'):
+def request_post(person_in,device,url = 'https://mltest.advice.co.th/mltest/count_post.php'):
     # data = {"data": file}
     # text = {"Username": nameid, "Customer ID": customid, "Order ID": order,
     #         "Tel": tel, "Box size": size, "file_type": extension, "token": encoded,
     #         "check_success": check_success}
-    text = {'person_in': person_in,'token': 'dkjfkdsjskfa'}
-    print(text)
+    text1 = {'camera_id': device, 'cus_group': 'walk pass', 'gender': 'male', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
+    # text2 = {'camera_id': device, 'cus_group': 'walk pass', 'gender': 'female', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
+    text3 = {'camera_id': device, 'cus_group': 'walk in', 'gender': 'male', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
+    # text4 = {'camera_id': device, 'cus_group': 'walk in', 'gender': 'female', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
+    print(text1)
     # response = requests.post(url, files=data, data=text)
-    response = requests.post(url, data=text)
+    response1 = requests.post(url, data=text1)
     print('------posting------')
-    if response.ok:
+    if response1.ok:
         print("Upload completed successfully!")
 
     else:
-        response.raise_for_status()
+        response1.raise_for_status()
         print("Something went wrong!")
 
-def main(rtsp,device,save_video = False,cap_person_roi = False, post_to_server = False):
+    # response2 = requests.post(url, data=text2)
+    # print('------posting------')
+    # if response2.ok:
+    #     print("Upload completed successfully!")
+    #
+    # else:
+    #     response2.raise_for_status()
+    #     print("Something went wrong!")
+    #
+    # response3 = requests.post(url, data=text3)
+    # print('------posting------')
+    # if response3.ok:
+    #     print("Upload completed successfully!")
+    #
+    # else:
+    #     response3.raise_for_status()
+    #     print("Something went wrong!")
+    #
+    # response4 = requests.post(url, data=text4)
+    # print('------posting------')
+    # if response4.ok:
+    #     print("Upload completed successfully!")
+    #
+    # else:
+    #     response4.raise_for_status()
+    #     print("Something went wrong!")
+
+def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi = False, post_to_server = False, cam_direction = None):
     cap = cv2.VideoCapture(rtsp)
     st = None
     record = 0
@@ -90,6 +120,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False, post_to_server =
     totalFrames = 0
     totalout = 0
     totalin = 0
+    totalpass = 0
     x = []
     empty = []
     empty1 = []
@@ -114,11 +145,15 @@ def main(rtsp,device,save_video = False,cap_person_roi = False, post_to_server =
             st_post = time.time()
         et = time.time()
 
-        if et - st > 0.15:
+        if et - st > 0.1:
             # if totalFrames % 2 == 0:
             trackers = []
 
-            roi = frame[0:H,int((W/2)-100):int((W/2)+100)]
+            if cam_direction == 'Y':
+                roi = frame[0:H, line_ref_pri-line_ref_sec:line_ref_pri+line_ref_sec]
+            elif cam_direction == 'X':
+                roi = frame[0:line_ref_pri+line_ref_sec, 0:W]
+
             (H_roi, W_roi) = roi.shape[:2]
             results = model(roi, size=480)
 
@@ -160,10 +195,14 @@ def main(rtsp,device,save_video = False,cap_person_roi = False, post_to_server =
                 endY = int(pos.bottom())
 
                 rects.append((startX, startY, endX, endY))
-
-            cv2.line(frame, ((W // 2) + 0, 0), ((W // 2) + 0, H), (0, 0, 0), 3)
-            # cv2.line(frame, ((W // 2) - 100, 0), ((W // 2) - 100, H), (0, 0, 0), 3)
-            # cv2.line(frame, ((W // 2) + 100, 0), ((W // 2) + 100, H), (0, 0, 0), 3)
+            if cam_direction == 'Y':
+                cv2.line(frame, (line_ref_pri, 0), (line_ref_pri, H), (0, 0, 0), 3)
+                cv2.line(frame, (line_ref_pri-line_ref_sec, 0), (line_ref_pri-line_ref_sec, H), (0, 0, 0), 3)
+                cv2.line(frame, (line_ref_pri+line_ref_sec, 0), (line_ref_pri+line_ref_sec, H), (0, 0, 0), 3)
+            elif cam_direction == 'X':
+                cv2.line(frame, (0, line_ref_pri), (W, line_ref_pri), (0, 0, 0), 3)
+                cv2.line(frame, (0, line_ref_pri-line_ref_sec), (W, line_ref_pri-line_ref_sec), (0, 0, 0), 3)
+                cv2.line(frame, (0, line_ref_pri+line_ref_sec), (W, line_ref_pri+line_ref_sec), (0, 0, 0), 3)
 
             boundingboxes = np.array(rects)
             boundingboxes = boundingboxes.astype(int)
@@ -176,21 +215,36 @@ def main(rtsp,device,save_video = False,cap_person_roi = False, post_to_server =
                 if to is None:
                     to = TrackableObject(objectID, centroid)
                 else:
-                    y = [c[0] for c in to.centroids]
+                    if cam_direction == 'Y':
+                        y = [c[0] for c in to.centroids]
 
-                    direction = centroid[0] - np.mean(y)
+                        direction = centroid[0] - np.mean(y)
+                    elif cam_direction == 'X':
+                        y = [c[1] for c in to.centroids]
+
+                        direction = centroid[1] - np.mean(y)
                     to.centroids.append(centroid)
 
                     if not to.counted:
-                        if direction < -20 and ((W_roi // 2) - 100 < centroid[0] < W_roi // 2):
-                            totalin += 1
-                            print(objectID,direction)
-                            to.counted = True
+                        if cam_direction == 'Y':
+                            if direction < -20 and ((W_roi // 2) - line_ref_sec < centroid[0] < W_roi // 2):
+                                totalin += 1
+                                print(objectID,direction)
+                                to.counted = True
 
-                        elif direction > 20 and ((W_roi // 2) + 100 > centroid[0] > W_roi // 2):
-                            totalout += 1
-                            print(objectID,direction)
-                            to.counted = True
+                            elif direction > 20 and ((W_roi // 2) + line_ref_sec > centroid[0] > W_roi // 2):
+                                totalout += 1
+                                print(objectID,direction)
+                                to.counted = True
+                        elif cam_direction == 'X':
+                            # if direction < -10 and (H_roi > centroid[1] > H_roi - line_ref_sec):
+                            #     totalout += 1
+                            #     print(objectID, direction)
+                            #     to.counted = True
+                            if direction > 20 and (H_roi  > centroid[1] > H_roi - line_ref_sec):
+                                totalin += 1
+                                print(objectID, direction)
+                                to.counted = True
 
                 trackableObjects[objectID] = to
 
@@ -202,7 +256,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False, post_to_server =
                 cv2.circle(roi, (centroid[0], centroid[1]), 4, (0, 0, 255), -1)
 
             info = [
-                ("Exit", totalout),
+                # ("Exit", totalout),
                 ("Enter", totalin + old),
             ]
 
@@ -232,7 +286,7 @@ def main(rtsp,device,save_video = False,cap_person_roi = False, post_to_server =
         if et - st_post > 60:
             print(totalin,old)
             if post_to_server == True:
-                request_post(totalin)
+                request_post(totalin,device)
             old += totalin
             totalin = 0
             st_post = time.time()
@@ -240,32 +294,79 @@ def main(rtsp,device,save_video = False,cap_person_roi = False, post_to_server =
         k = cv2.waitKey(1)
         if k == ord('q'):
             break
-        totalFrames += 1
+        # totalFrames += 1
     cap.release()
     if record == 1:
         rec.release()
     cv2.destroyWindow(f'{rtsp}')
 
-def main_threading(rtsp,device,save_video,cap_person_roi,post_to_server):
-    t1 = Thread(target=main, args=(rtsp,device,save_video,cap_person_roi,post_to_server,))
+def main_threading(rtsp,device,line_ref_pri,line_ref_sec,save_video,cap_person_roi,post_to_server,cam_direction):
+    t1 = Thread(target=main, args=(rtsp,device,line_ref_pri,line_ref_sec,save_video,cap_person_roi,post_to_server,cam_direction,))
     t1.start()
 
 if __name__ == '__main__':
     print('start load model!!!')
     model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-    model.conf = 0.2
-    model.iou = 0.9
+    model.conf = 0.1
+    model.iou = 0
 
     print('load yolov5 successfully!!!')
 
-    main_threading(rtsp='rtsp://test:advice128@110.49.125.237:554/cam/realmonitor?channel=1&subtype=0',
-                   device=1,
-                   save_video=False,
-                   cap_person_roi=False,
-                   post_to_server=False)
+    # main_threading(rtsp='rtsp://test:advice128@110.49.125.237:554/cam/realmonitor?channel=1&subtype=0',
+    #                device=1,
+    #                line_ref_pri = 160,
+    #                line_ref_sec = 50,
+    #                save_video=False,
+    #                cap_person_roi=False,
+    #                post_to_server=True,
+    #                cam_direction='X')
 
-    main_threading(rtsp='rtsp://admin:888888@192.168.7.50:10554/tcp/av0_0',
-                   device=2,
-                   save_video=False,
-                   cap_person_roi=False,
-                   post_to_server=False)
+    # main_threading(rtsp='rtsp://admin:888888@192.168.7.50:10554/tcp/av0_0',
+    #                device=2,
+    #                line_ref_pri=0,
+    #                line_ref_sec=100,
+    #                save_video=False,
+    #                cap_person_roi=False,
+    #                post_to_server=False,
+    #                cam_direction='Y')
+    main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
+         device=14,
+         line_ref_pri=130,
+         line_ref_sec=50,
+         save_video=False,
+         cap_person_roi=False,
+         post_to_server=False,
+         cam_direction='X')
+    # main_threading(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
+    #                device=14,
+    #                line_ref_pri=130,
+    #                line_ref_sec=50,
+    #                save_video=False,
+    #                cap_person_roi=False,
+    #                post_to_server=False,
+    #                cam_direction='X')
+
+    # main_threading(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=15&subtype=0',
+    #                device=15,
+    #                line_ref_pri=450,
+    #                line_ref_sec=20,
+    #                save_video=False,
+    #                cap_person_roi=False,
+    #                post_to_server=False,
+    #                cam_direction='Y')
+
+# import cv2
+#
+# cap =cv2.VideoCapture('rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0')
+#
+# while True:
+#     _,frame = cap.read()
+#     frame = cv2.resize(frame,(640,360))
+#
+#     cv2.imshow('f',frame)
+#     k = cv2.waitKey(1)
+#     if k == ord('q'):
+#         break
+#
+# cap.release()
+# cv2.destroyAllWindows()
