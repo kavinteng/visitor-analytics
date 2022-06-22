@@ -203,8 +203,8 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 cv2.line(frame, (0, line_ref_pri), (W, line_ref_pri), (0, 0, 0), 3)
                 # cv2.line(frame, (0, line_ref_pri-line_ref_sec), (W, line_ref_pri-line_ref_sec), (0, 0, 0), 3)
                 cv2.line(frame, (0, line_ref_pri+line_ref_sec), (W, line_ref_pri+line_ref_sec), (0, 0, 0), 3)
-                cv2.line(frame, (620, 0), (620, H), (0, 0, 0), 3)
-                cv2.line(frame, (10, 0), (10, H), (0, 0, 0), 3)
+                cv2.line(frame, (580, 0), (580, H), (0, 0, 0), 3)
+                cv2.line(frame, (30, 0), (30, H), (0, 0, 0), 3)
 
             # boundingboxes = np.array(rects)
             # boundingboxes = boundingboxes.astype(int)
@@ -243,7 +243,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                             #     totalout += 1
                             #     print(objectID, direction)
                             #     to.counted = True
-                            if direction > 20 and (H_roi  > centroid[1] > H_roi - line_ref_sec) and (620 > centroid[0] > 10):
+                            if direction > 20 and (H_roi  > centroid[1] > H_roi - line_ref_sec) and (580 > centroid[0] > 30):
                                 totalin += 1
                                 print(objectID, direction)
                                 to.counted = True
@@ -311,7 +311,9 @@ if __name__ == '__main__':
     print('start load model!!!')
     model = torch.hub.load('ultralytics/yolov5', 'yolov5l', pretrained=True)
     model.conf = 0.1
-    model.iou = 0
+    model.iou = 0.6
+    model.classes = [0]  # (optional list) filter by class, i.e. = [0, 15, 16] for COCO persons, cats and dogs
+    model.amp = True  # Automatic Mixed Precision (AMP) inference
 
     print('load yolov5 successfully!!!')
 
