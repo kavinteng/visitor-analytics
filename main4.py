@@ -309,7 +309,7 @@ def main_threading(rtsp,device,line_ref_pri,line_ref_sec,save_video,cap_person_r
 
 if __name__ == '__main__':
     print('start load model!!!')
-    model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+    model = torch.hub.load('ultralytics/yolov5', 'yolov5l', pretrained=True)
     model.conf = 0.1
     model.iou = 0
 
