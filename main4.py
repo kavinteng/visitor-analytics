@@ -155,7 +155,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 roi = frame[0:line_ref_pri+line_ref_sec, 0:W]
 
             (H_roi, W_roi) = roi.shape[:2]
-            results = model(roi, size=480)
+            results = model(roi, size=640)
 
             out2 = results.pandas().xyxy[0]
 
@@ -269,6 +269,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                     a = datetime.datetime.now().strftime("%T")
                     a = a.replace(':', '-')
                     a = str(a)
+                    # st_vdo = time.time()
 
                     file = f'backup_video/{date}/device' + str(device) + "t{}.mp4".format(a)
 
