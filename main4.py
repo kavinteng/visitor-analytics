@@ -204,9 +204,9 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 cv2.line(frame, (0, line_ref_pri-line_ref_sec), (W, line_ref_pri-line_ref_sec), (0, 0, 0), 3)
                 cv2.line(frame, (0, line_ref_pri+line_ref_sec), (W, line_ref_pri+line_ref_sec), (0, 0, 0), 3)
 
-            boundingboxes = np.array(rects)
-            boundingboxes = boundingboxes.astype(int)
-            rects = non_max_suppression_fast(boundingboxes, 0.3)
+            # boundingboxes = np.array(rects)
+            # boundingboxes = boundingboxes.astype(int)
+            # rects = non_max_suppression_fast(boundingboxes, 0.3)
             objects = ct.update(rects)
 
             for (objectID, centroid) in objects.items():
@@ -329,14 +329,14 @@ if __name__ == '__main__':
     #                cap_person_roi=False,
     #                post_to_server=False,
     #                cam_direction='Y')
-    main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
-         device=14,
-         line_ref_pri=130,
-         line_ref_sec=50,
-         save_video=False,
-         cap_person_roi=False,
-         post_to_server=False,
-         cam_direction='X')
+    # main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
+    #      device=14,
+    #      line_ref_pri=130,
+    #      line_ref_sec=50,
+    #      save_video=False,
+    #      cap_person_roi=False,
+    #      post_to_server=False,
+    #      cam_direction='X')
     # main_threading(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
     #                device=14,
     #                line_ref_pri=130,
