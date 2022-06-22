@@ -312,6 +312,15 @@ if __name__ == '__main__':
 
     print('load yolov5 successfully!!!')
 
+    main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
+         device=14,
+         line_ref_pri=130,
+         line_ref_sec=50,
+         save_video=False,
+         cap_person_roi=False,
+         post_to_server=False,
+         cam_direction='X')
+
     # main_threading(rtsp='rtsp://test:advice128@110.49.125.237:554/cam/realmonitor?channel=1&subtype=0',
     #                device=1,
     #                line_ref_pri = 160,
@@ -329,14 +338,6 @@ if __name__ == '__main__':
     #                cap_person_roi=False,
     #                post_to_server=False,
     #                cam_direction='Y')
-    # main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
-    #      device=14,
-    #      line_ref_pri=130,
-    #      line_ref_sec=50,
-    #      save_video=False,
-    #      cap_person_roi=False,
-    #      post_to_server=False,
-    #      cam_direction='X')
     # main_threading(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
     #                device=14,
     #                line_ref_pri=130,
@@ -354,7 +355,6 @@ if __name__ == '__main__':
     #                cap_person_roi=False,
     #                post_to_server=False,
     #                cam_direction='Y')
-
 # import cv2
 #
 # cap =cv2.VideoCapture('rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0')
