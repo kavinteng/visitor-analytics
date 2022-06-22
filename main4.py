@@ -114,7 +114,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
 
     W = None
     H = None
-    ct = CentroidTracker(maxDisappeared=1, maxDistance=90)
+    ct = CentroidTracker(maxDisappeared=1, maxDistance=50)
     trackers = []
     trackableObjects = {}
     totalFrames = 0
