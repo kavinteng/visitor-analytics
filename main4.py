@@ -201,8 +201,10 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 cv2.line(frame, (line_ref_pri+line_ref_sec, 0), (line_ref_pri+line_ref_sec, H), (0, 0, 0), 3)
             elif cam_direction == 'X':
                 cv2.line(frame, (0, line_ref_pri), (W, line_ref_pri), (0, 0, 0), 3)
-                cv2.line(frame, (0, line_ref_pri-line_ref_sec), (W, line_ref_pri-line_ref_sec), (0, 0, 0), 3)
+                # cv2.line(frame, (0, line_ref_pri-line_ref_sec), (W, line_ref_pri-line_ref_sec), (0, 0, 0), 3)
                 cv2.line(frame, (0, line_ref_pri+line_ref_sec), (W, line_ref_pri+line_ref_sec), (0, 0, 0), 3)
+                cv2.line(frame, (620, 0), (620, H), (0, 0, 0), 3)
+                cv2.line(frame, (10, 0), (10, H), (0, 0, 0), 3)
 
             # boundingboxes = np.array(rects)
             # boundingboxes = boundingboxes.astype(int)
@@ -241,7 +243,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                             #     totalout += 1
                             #     print(objectID, direction)
                             #     to.counted = True
-                            if direction > 20 and (H_roi  > centroid[1] > H_roi - line_ref_sec):
+                            if direction > 20 and (H_roi  > centroid[1] > H_roi - line_ref_sec) and (620 > centroid[0] > 10):
                                 totalin += 1
                                 print(objectID, direction)
                                 to.counted = True
