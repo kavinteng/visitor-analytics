@@ -130,6 +130,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
     while True:
         create_folder()
         date = datetime.date.today()
+        b = datetime.datetime.now().strftime("%T")
         ret,frame = cap.read()
         if ret == False:
             break
@@ -180,11 +181,12 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
 
                         if cap_person_roi == True:
                             person_img = frame_record[ymin:ymax, xmin:xmax]
-                            b = datetime.datetime.now().strftime("%T")
-                            b = b.replace(':', '-')
-                            b = str(b)
-                            filename = f'backup_img/{date}/device' + str(device) + f"t{b}.jpg"
-                            cv2.imwrite(filename, person_img)
+                            (H_person, W_person) = person_img.shape[:2]
+                            if H_person*W_person > 1000:
+                                b = b.replace(':', '-')
+                                b = str(b)
+                                filename = f'backup_img/{date}/device' + str(device) + f"t{b}.jpg"
+                                cv2.imwrite(filename, person_img)
 
             for tracker in trackers:
                 tracker.update(rgb)
@@ -206,6 +208,8 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 cv2.line(frame, (0, line_ref_pri+line_ref_sec), (W, line_ref_pri+line_ref_sec), (0, 0, 0), 3)
                 cv2.line(frame, (580, 0), (580, H), (0, 0, 0), 3)
                 cv2.line(frame, (30, 0), (30, H), (0, 0, 0), 3)
+                cv2.line(frame, (500, 0), (500, line_ref_pri), (0, 0, 0), 3)
+                cv2.line(frame, (110, 0), (110, line_ref_pri), (0, 0, 0), 3)
 
             # boundingboxes = np.array(rects)
             # boundingboxes = boundingboxes.astype(int)
@@ -299,7 +303,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
             st_post = time.time()
 
         k = cv2.waitKey(1)
-        if k == ord('q'):
+        if k == ord('q') or b > '22:30:00':
             break
         # totalFrames += 1
     cap.release()
@@ -321,7 +325,16 @@ if __name__ == '__main__':
 
     print('load yolov5 successfully!!!')
 
-    main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
+    # main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
+    #      device=14,
+    #      line_ref_pri=130,
+    #      line_ref_sec=50,
+    #      save_video=False,
+    #      cap_person_roi=True,
+    #      post_to_server=False,
+    #      cam_direction='X')
+
+    main(rtsp=0,
          device=14,
          line_ref_pri=130,
          line_ref_sec=50,
