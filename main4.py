@@ -60,12 +60,12 @@ def create_folder():
     if os.path.isdir(date_vdo) == False:
         os.mkdir(date_vdo)
 
-def request_post(person_in,device,url = 'https://mltest.advice.co.th/mltest/count_post.php'):
+def request_post(person_in,person_pass,device,url = 'https://mltest.advice.co.th/mltest/count_post.php'):
     # data = {"data": file}
     # text = {"Username": nameid, "Customer ID": customid, "Order ID": order,
     #         "Tel": tel, "Box size": size, "file_type": extension, "token": encoded,
     #         "check_success": check_success}
-    text1 = {'camera_id': device, 'cus_group': 'walk pass', 'gender': 'male', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
+    text1 = {'camera_id': device, 'cus_group': 'walk pass', 'gender': 'male', 'count_person': person_pass, 'token': 'dkjfkdsjskfa'}
     # text2 = {'camera_id': device, 'cus_group': 'walk pass', 'gender': 'female', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
     text3 = {'camera_id': device, 'cus_group': 'walk in', 'gender': 'male', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
     # text4 = {'camera_id': device, 'cus_group': 'walk in', 'gender': 'female', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
@@ -125,6 +125,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
     empty = []
     empty1 = []
     old = 0
+    old_pass = 0
 
     while True:
         create_folder()
@@ -248,6 +249,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                                 print(objectID, direction)
                                 to.counted = True
 
+
                 trackableObjects[objectID] = to
 
                 objectID = objectID + 1
@@ -258,7 +260,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 cv2.circle(roi, (centroid[0], centroid[1]), 4, (0, 0, 255), -1)
 
             info = [
-                # ("Exit", totalout),
+                ("Total person", totalpass + old_pass),
                 ("Enter", totalin + old),
             ]
 
@@ -287,11 +289,13 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
             cv2.imshow(f'{rtsp}', frame)
 
         if et - st_post > 60:
-            print(totalin,old)
+            # print(totalin,old)
             if post_to_server == True:
-                request_post(totalin,device)
+                request_post(totalin,totalpass,device)
             old += totalin
+            old_pass += totalpass
             totalin = 0
+            totalpass = 0
             st_post = time.time()
 
         k = cv2.waitKey(1)
@@ -322,7 +326,7 @@ if __name__ == '__main__':
          line_ref_pri=130,
          line_ref_sec=50,
          save_video=False,
-         cap_person_roi=False,
+         cap_person_roi=True,
          post_to_server=False,
          cam_direction='X')
 
