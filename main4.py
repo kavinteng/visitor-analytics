@@ -211,8 +211,6 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 cv2.line(frame, (0, line_ref_pri+line_ref_sec), (W, line_ref_pri+line_ref_sec), (0, 0, 0), 3)
                 cv2.line(frame, (580, 0), (580, H), (0, 0, 0), 3)
                 cv2.line(frame, (30, 0), (30, H), (0, 0, 0), 3)
-                cv2.line(frame, (500, 0), (500, line_ref_pri), (0, 0, 0), 3)
-                cv2.line(frame, (110, 0), (110, line_ref_pri), (0, 0, 0), 3)
 
             # boundingboxes = np.array(rects)
             # boundingboxes = boundingboxes.astype(int)
