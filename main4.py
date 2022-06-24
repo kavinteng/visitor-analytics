@@ -114,9 +114,10 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
 
     W = None
     H = None
-    ct = CentroidTracker(maxDisappeared=1, maxDistance=50)
+    ct = CentroidTracker(maxDisappeared=1, maxDistance=60)
     trackers = []
     trackableObjects = {}
+    trackableObjects2 = {}
     totalFrames = 0
     totalout = 0
     totalin = 0
@@ -154,7 +155,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
             if cam_direction == 'Y':
                 roi = frame[0:H, line_ref_pri-line_ref_sec:line_ref_pri+line_ref_sec]
             elif cam_direction == 'X':
-                roi = frame[0:line_ref_pri+line_ref_sec, 0:W]
+                roi = frame[0:line_ref_pri+line_ref_sec+line_ref_sec, 0:W]
 
             (H_roi, W_roi) = roi.shape[:2]
             results = model(roi, size=640)
@@ -218,19 +219,26 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
 
             for (objectID, centroid) in objects.items():
                 to = trackableObjects.get(objectID, None)
+                to2 = trackableObjects2.get(objectID, None)
 
                 if to is None:
                     to = TrackableObject(objectID, centroid)
+                if to2 is None:
+                    to2 = TrackableObject(objectID, centroid)
                 else:
                     if cam_direction == 'Y':
                         y = [c[0] for c in to.centroids]
 
                         direction = centroid[0] - np.mean(y)
                     elif cam_direction == 'X':
+                        x = [c[0] for c in to.centroids]
+
+                        direction_x = centroid[0] - np.mean(x)
                         y = [c[1] for c in to.centroids]
 
-                        direction = centroid[1] - np.mean(y)
+                        direction_y = centroid[1] - np.mean(y)
                     to.centroids.append(centroid)
+                    to2.centroids.append(centroid)
 
                     if not to.counted:
                         if cam_direction == 'Y':
@@ -244,17 +252,24 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                                 print(objectID,direction)
                                 to.counted = True
                         elif cam_direction == 'X':
-                            if direction < -20 and (H_roi - line_ref_sec > centroid[1] > H_roi - line_ref_sec - line_ref_sec) and (580 > centroid[0] > 30):
-                                totalout += 1
-                                print(objectID, direction)
-                                to.counted = True
-                            elif direction > 20 and (H_roi  > centroid[1] > H_roi - line_ref_sec) and (580 > centroid[0] > 30):
+                            # if direction < -20 and (H_roi - line_ref_sec > centroid[1] > H_roi - line_ref_sec - line_ref_sec) and (580 > centroid[0] > 30):
+                            #     totalout += 1
+                            #     print(objectID, direction)
+                            #     to.counted = True
+                            if not to2.counted:
+                                if (direction_x > 30 or direction_x < -30) and (580 > centroid[0] > 30) and (H_roi - line_ref_sec - line_ref_sec  > centroid[1]):
+                                    totalpass += 1
+                                    # print(objectID, direction_x)
+                                    to2.counted = True
+
+                            if direction_y > 20 and (H_roi - line_ref_sec  > centroid[1] > H_roi - line_ref_sec - line_ref_sec) and (580 > centroid[0] > 30):
                                 totalin += 1
-                                print(objectID, direction)
+                                # print(objectID, direction_y)
                                 to.counted = True
 
 
                 trackableObjects[objectID] = to
+                trackableObjects2[objectID] = to2
 
                 objectID = objectID + 1
                 # cv2.rectangle(roi, (x1 - 5, y1), (x2 - 5, y2), (0, 0, 255), 2)
@@ -304,12 +319,13 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
 
         k = cv2.waitKey(1)
         if k == ord('q') or b > '22:30:00':
+            print('exit program !!!')
             break
         # totalFrames += 1
     cap.release()
     if record == 1:
         rec.release()
-    cv2.destroyWindow(f'{rtsp}')
+    cv2.destroyAllWindows()
 
 def main_threading(rtsp,device,line_ref_pri,line_ref_sec,save_video,cap_person_roi,post_to_server,cam_direction):
     t1 = Thread(target=main, args=(rtsp,device,line_ref_pri,line_ref_sec,save_video,cap_person_roi,post_to_server,cam_direction,))
