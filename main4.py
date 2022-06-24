@@ -160,7 +160,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 roi = frame[0:line_ref_pri+line_ref_sec+line_ref_sec, 0:W]
 
             (H_roi, W_roi) = roi.shape[:2]
-            results = model(roi, size=640)
+            results = model(roi, size=360)
 
             out2 = results.pandas().xyxy[0]
 
