@@ -134,6 +134,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
         b = datetime.datetime.now().strftime("%T")
         ret,frame = cap.read()
         if ret == False:
+            print(f'stop: {rtsp}')
             break
         frame = cv2.resize(frame,(640,360))
         frame_record = frame.copy()
