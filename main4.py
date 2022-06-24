@@ -90,14 +90,14 @@ def request_post(person_in,person_pass,device,url = 'https://mltest.advice.co.th
     #     response2.raise_for_status()
     #     print("Something went wrong!")
     #
-    # response3 = requests.post(url, data=text3)
-    # print('------posting------')
-    # if response3.ok:
-    #     print("Upload completed successfully!")
-    #
-    # else:
-    #     response3.raise_for_status()
-    #     print("Something went wrong!")
+    response3 = requests.post(url, data=text3)
+    print('------posting------')
+    if response3.ok:
+        print("Upload completed successfully!")
+
+    else:
+        response3.raise_for_status()
+        print("Something went wrong!")
     #
     # response4 = requests.post(url, data=text4)
     # print('------posting------')
@@ -286,7 +286,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 conver_rate = ((totalin + old)/(totalpass + old_pass))*100
 
             info = [
-                ("Conversion rate", conver_rate),
+                ("Conversion rate", '{:.2f}'.format(conver_rate)),
                 ("Total person", totalpass + old_pass),
                 ("Enter", totalin + old),
             ]
@@ -350,12 +350,12 @@ if __name__ == '__main__':
     print('load yolov5 successfully!!!')
 
     main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
-         device=14,
+         device='fashion_island_14',
          line_ref_pri=130,
          line_ref_sec=50,
          save_video=False,
          cap_person_roi=True,
-         post_to_server=False,
+         post_to_server=True,
          cam_direction='X')
 
     # main(rtsp=0,
