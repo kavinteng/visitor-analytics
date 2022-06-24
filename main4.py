@@ -5,6 +5,7 @@ from mylib.trackableobject import TrackableObject
 from threading import Thread
 import requests
 import sys
+import platform
 
 def non_max_suppression_fast(boxes, overlapThresh):
     try:
@@ -37,7 +38,7 @@ def non_max_suppression_fast(boxes, overlapThresh):
             h = np.maximum(0, yy2 - yy1 + 1)
 
             overlap = (w * h) / area[idxs[:last]]
-    
+
             idxs = np.delete(idxs, np.concatenate(([last],
                                                    np.where(overlap > overlapThresh)[0])))
 
