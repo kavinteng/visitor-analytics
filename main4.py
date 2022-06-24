@@ -4,6 +4,7 @@ from mylib.centroidtracker import CentroidTracker
 from mylib.trackableobject import TrackableObject
 from threading import Thread
 import requests
+import sys
 
 def non_max_suppression_fast(boxes, overlapThresh):
     try:
@@ -279,8 +280,13 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
                 cv2.circle(roi, (centroid[0], centroid[1]), 4, (0, 0, 255), -1)
 
+            if totalpass == 0 and old_pass == 0:
+                conver_rate = 0.00
+            else:
+                conver_rate = ((totalin + old)/(totalpass + old_pass))*100
+
             info = [
-                ("Conversion rate", ((totalin + old)/(totalpass + old_pass))*100),
+                ("Conversion rate", conver_rate),
                 ("Total person", totalpass + old_pass),
                 ("Enter", totalin + old),
             ]
@@ -325,6 +331,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
             break
         elif k == ord('g'):
             os.system('git pull')
+            os.execv(sys.executable, ['python'] + sys.argv)
         # totalFrames += 1
     cap.release()
     if record == 1:
@@ -338,23 +345,14 @@ def main_threading(rtsp,device,line_ref_pri,line_ref_sec,save_video,cap_person_r
 if __name__ == '__main__':
     print('start load model!!!')
     model = torch.hub.load('ultralytics/yolov5', 'yolov5l', pretrained=True)
-    model.conf = 0.1
+    model.conf = 0.2
     model.iou = 0.6
     model.classes = [0]  # (optional list) filter by class, i.e. = [0, 15, 16] for COCO persons, cats and dogs
     model.amp = True  # Automatic Mixed Precision (AMP) inference
 
     print('load yolov5 successfully!!!')
 
-    main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
-         device=14,
-         line_ref_pri=130,
-         line_ref_sec=50,
-         save_video=False,
-         cap_person_roi=True,
-         post_to_server=False,
-         cam_direction='X')
-
-    # main(rtsp=0,
+    # main(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0',
     #      device=14,
     #      line_ref_pri=130,
     #      line_ref_sec=50,
@@ -362,6 +360,15 @@ if __name__ == '__main__':
     #      cap_person_roi=True,
     #      post_to_server=False,
     #      cam_direction='X')
+
+    main(rtsp=0,
+         device=14,
+         line_ref_pri=130,
+         line_ref_sec=50,
+         save_video=False,
+         cap_person_roi=True,
+         post_to_server=False,
+         cam_direction='X')
 
     # main_threading(rtsp='rtsp://test:advice128@110.49.125.237:554/cam/realmonitor?channel=1&subtype=0',
     #                device=1,
