@@ -11,5 +11,5 @@ while True:
     # elif time > '23:00:00' and run_check == True:
     #     run_check = False
 
-    elif time > '23:00:00' and run_check == True:
+    elif time < '08:30:00' and time > '08:00:00' and run_check == True:
         run_check = False
