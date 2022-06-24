@@ -37,7 +37,7 @@ def non_max_suppression_fast(boxes, overlapThresh):
             h = np.maximum(0, yy2 - yy1 + 1)
 
             overlap = (w * h) / area[idxs[:last]]
-
+    
             idxs = np.delete(idxs, np.concatenate(([last],
                                                    np.where(overlap > overlapThresh)[0])))
 
@@ -135,7 +135,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
         b = datetime.datetime.now().strftime("%T")
         ret,frame = cap.read()
         if ret == False:
-            print(f'stop: {rtsp}')
+            print('stop: {}'.format(rtsp))
             break
         frame = cv2.resize(frame,(640,360))
         frame_record = frame.copy()
@@ -188,7 +188,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                             if H_person*W_person > 1000:
                                 b = b.replace(':', '-')
                                 b = str(b)
-                                filename = f'backup_img/{date}/device' + str(device) + f"t{b}.jpg"
+                                filename = 'backup_img/{}/device'.format(date) + str(device) + "t{}.jpg".format(b)
                                 cv2.imwrite(filename, person_img)
 
             for tracker in trackers:
@@ -300,7 +300,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                     a = str(a)
                     # st_vdo = time.time()
 
-                    file = f'backup_video/{date}/device' + str(device) + "t{}.mp4".format(a)
+                    file = 'backup_video/{}/device'.format(date) + str(device) + "t{}.mp4".format(a)
 
                     video_size = (640, 360)
                     fourcc = cv2.VideoWriter_fourcc(*'H264')
@@ -311,7 +311,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 if record == 1:
                     rec.write(frame_record)
             st = time.time()
-            cv2.imshow(f'{rtsp}', frame)
+            cv2.imshow('{}'.format(rtsp), frame)
 
         if et - st_post > 60:
             # print(totalin,old)
