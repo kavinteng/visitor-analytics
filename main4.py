@@ -352,8 +352,8 @@ if __name__ == '__main__':
          line_ref_pri=130,
          line_ref_sec=50,
          save_video=False,
-         cap_person_roi=True,
-         post_to_server=True,
+         cap_person_roi=False,
+         post_to_server=False,
          cam_direction='X')
 
     # main(rtsp=0,
