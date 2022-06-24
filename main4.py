@@ -280,6 +280,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                 cv2.circle(roi, (centroid[0], centroid[1]), 4, (0, 0, 255), -1)
 
             info = [
+                ("Conversion rate", ((totalin + old)/(totalpass + old_pass))*100),
                 ("Total person", totalpass + old_pass),
                 ("Enter", totalin + old),
             ]
@@ -322,6 +323,8 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
         if k == ord('q') or b > '22:30:00':
             print('exit program !!!')
             break
+        elif k == ord('g'):
+            os.system('git pull')
         # totalFrames += 1
     cap.release()
     if record == 1:
