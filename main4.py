@@ -329,9 +329,6 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
         if k == ord('q') or b > '22:30:00':
             print('exit program !!!')
             break
-        elif k == ord('g'):
-            os.system('git pull')
-            os.execv(sys.executable, ['python'] + sys.argv)
         # totalFrames += 1
     cap.release()
     if record == 1:
