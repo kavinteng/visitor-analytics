@@ -137,6 +137,8 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
         ret,frame = cap.read()
         if ret == False:
             print('stop: {}'.format(rtsp))
+            print('auto start!!!')
+            os.execv(sys.executable, ['python'] + sys.argv)
             break
         frame = cv2.resize(frame,(640,360))
         frame_record = frame.copy()
@@ -355,7 +357,7 @@ if __name__ == '__main__':
          line_ref_sec=50,
          save_video=False,
          cap_person_roi=False,
-         post_to_server=False,
+         post_to_server=True,
          cam_direction='X')
 
     # main(rtsp=0,
