@@ -67,10 +67,10 @@ def request_post(person_in,person_pass,device,url = 'https://mltest.advice.co.th
     # text = {"Username": nameid, "Customer ID": customid, "Order ID": order,
     #         "Tel": tel, "Box size": size, "file_type": extension, "token": encoded,
     #         "check_success": check_success}
-    text1 = {'camera_id': device, 'cus_group': 'walk pass', 'gender': 'male', 'count_person': person_pass, 'token': 'dkjfkdsjskfa'}
-    # text2 = {'camera_id': device, 'cus_group': 'walk pass', 'gender': 'female', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
-    text3 = {'camera_id': device, 'cus_group': 'walk in', 'gender': 'male', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
-    # text4 = {'camera_id': device, 'cus_group': 'walk in', 'gender': 'female', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
+    text1 = {'branch_cuscode5':'KS513','camera_id': device, 'cus_group': 'walk pass', 'gender': 'male', 'count_person': person_pass, 'token': 'dkjfkdsjskfa'}
+    # text2 = {'branch_cuscode5':'KS513','camera_id': device, 'cus_group': 'walk pass', 'gender': 'female', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
+    text3 = {'branch_cuscode5':'KS513','camera_id': device, 'cus_group': 'walk in', 'gender': 'male', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
+    # text4 = {'branch_cuscode5':'KS513','camera_id': device, 'cus_group': 'walk in', 'gender': 'female', 'count_person': person_in, 'token': 'dkjfkdsjskfa'}
     print(text1)
     # response = requests.post(url, files=data, data=text)
     response1 = requests.post(url, data=text1)
@@ -345,7 +345,7 @@ if __name__ == '__main__':
     print('start load model!!!')
     model = torch.hub.load('ultralytics/yolov5', 'yolov5l', pretrained=True)
     model.conf = 0.2
-    model.iou = 0.6
+    model.iou = 0.4
     model.classes = [0]  # (optional list) filter by class, i.e. = [0, 15, 16] for COCO persons, cats and dogs
     model.amp = True  # Automatic Mixed Precision (AMP) inference
 
@@ -357,7 +357,7 @@ if __name__ == '__main__':
          line_ref_sec=50,
          save_video=False,
          cap_person_roi=False,
-         post_to_server=True,
+         post_to_server=False,
          cam_direction='X')
 
     # main(rtsp=0,
@@ -394,7 +394,7 @@ if __name__ == '__main__':
     #                cap_person_roi=False,
     #                post_to_server=False,
     #                cam_direction='X')
-
+    #
     # main_threading(rtsp='rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=15&subtype=0',
     #                device=15,
     #                line_ref_pri=450,
@@ -403,18 +403,3 @@ if __name__ == '__main__':
     #                cap_person_roi=False,
     #                post_to_server=False,
     #                cam_direction='Y')
-# import cv2
-#
-# cap =cv2.VideoCapture('rtsp://testcam:Password1@advicedvrddns.ddns.net:554/cam/realmonitor?channel=14&subtype=0')
-#
-# while True:
-#     _,frame = cap.read()
-#     frame = cv2.resize(frame,(640,360))
-#
-#     cv2.imshow('f',frame)
-#     k = cv2.waitKey(1)
-#     if k == ord('q'):
-#         break
-#
-# cap.release()
-# cv2.destroyAllWindows()
