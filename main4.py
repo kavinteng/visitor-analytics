@@ -255,20 +255,21 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
                                 print(objectID,direction)
                                 to.counted = True
                         elif cam_direction == 'X':
-                            # if direction < -20 and (H_roi - line_ref_sec > centroid[1] > H_roi - line_ref_sec - line_ref_sec) and (580 > centroid[0] > 30):
-                            #     totalout += 1
-                            #     print(objectID, direction)
-                            #     to.counted = True
                             if not to2.counted:
                                 if (direction_x > 30 or direction_x < -30) and (580 > centroid[0] > 30) and (H_roi - line_ref_sec - line_ref_sec  > centroid[1]):
                                     totalpass += 1
                                     # print(objectID, direction_x)
+                                    to2.counted = True
+                                elif direction_y < -20 and (H_roi - line_ref_sec > centroid[1] > H_roi - line_ref_sec - line_ref_sec) and (580 > centroid[0] > 30):
+                                    totalout += 1
+                                    # print(objectID, direction_y)
                                     to2.counted = True
 
                             if direction_y > 20 and (H_roi - line_ref_sec  > centroid[1] > H_roi - line_ref_sec - line_ref_sec) and (580 > centroid[0] > 30):
                                 totalin += 1
                                 # print(objectID, direction_y)
                                 to.counted = True
+
 
 
                 trackableObjects[objectID] = to
