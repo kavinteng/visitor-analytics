@@ -328,8 +328,8 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
             st_post = time.time()
 
         k = cv2.waitKey(1)
-        # if k == ord('q') or b > '22:30:00':
-        if k == ord('q'):
+        if k == ord('q') or b > '22:30:00':
+        # if k == ord('q'):
             print('exit program !!!')
             break
         # totalFrames += 1
