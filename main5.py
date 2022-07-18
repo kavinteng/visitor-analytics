@@ -151,7 +151,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
             print('auto start!!!')
             os.execv(sys.executable, ['python'] + sys.argv)
             break
-        frame = cv2.resize(frame,(1600,900))
+        frame = cv2.resize(frame,(640,360))
         frame_record = frame.copy()
         if W is None or H is None:
             (H, W) = frame.shape[:2]
@@ -233,7 +233,8 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
 
             for (objectID, (startX, startY, endX, endY)) in objects.items():
                 person = roi[startY:endY,startX:endX]
-                if len(person) != 0:
+                if len(person) > 0:
+                    print(len(person))
                     test_hist = extract_color_histogram(person)
                     result = loaded_model.predict(np.array([test_hist]))
 
@@ -383,7 +384,7 @@ if __name__ == '__main__':
     print('start load model!!!')
     model = torch.hub.load('ultralytics/yolov5', 'yolov5l', pretrained=True)
     model.conf = 0.2
-    model.iou = 0.4
+    # model.iou = 0.4
     model.classes = [0]  # (optional list) filter by class, i.e. = [0, 15, 16] for COCO persons, cats and dogs
     # model.amp = True  # Automatic Mixed Precision (AMP) inference
 
