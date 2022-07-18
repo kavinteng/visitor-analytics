@@ -233,9 +233,12 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
 
             for (objectID, (startX, startY, endX, endY)) in objects.items():
                 person = frame_record[startY:endY,startX:endX]
-                if len(person) > 0:
-                    test_hist = extract_color_histogram(person)
-                    result = loaded_model.predict(np.array([test_hist]))
+                try:
+                    if len(person) > 0:
+                        test_hist = extract_color_histogram(person)
+                        result = loaded_model.predict(np.array([test_hist]))
+                except:
+                    pass
 
                 cX = int((startX + endX) / 2.0)
                 cY = int((startY + endY) / 2.0)
