@@ -7,9 +7,9 @@ while True:
     time = datetime.datetime.now().strftime("%T")
     if time > '08:30:00' and run_check == False:
         if platform.system() == 'Linux':
-            os.system('python3 main4.py')
+            os.system('python3 main5.py')
         elif platform.system() == 'Windows':
-            os.system('python main4.py')
+            os.system('python main5.py')
         run_check = True
 
     elif time < '08:10:00' and time > '08:00:00' and run_check == True:
