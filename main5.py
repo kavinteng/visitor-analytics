@@ -234,7 +234,6 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
             for (objectID, (startX, startY, endX, endY)) in objects.items():
                 person = roi[startY:endY,startX:endX]
                 if len(person) > 0:
-                    print(len(person))
                     test_hist = extract_color_histogram(person)
                     result = loaded_model.predict(np.array([test_hist]))
 
