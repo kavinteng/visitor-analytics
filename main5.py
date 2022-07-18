@@ -151,7 +151,7 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
             print('auto start!!!')
             os.execv(sys.executable, ['python'] + sys.argv)
             break
-        frame = cv2.resize(frame,(640,360))
+        frame = cv2.resize(frame,(1600,900))
         frame_record = frame.copy()
         if W is None or H is None:
             (H, W) = frame.shape[:2]
@@ -233,8 +233,9 @@ def main(rtsp,device,line_ref_pri,line_ref_sec,save_video = False,cap_person_roi
 
             for (objectID, (startX, startY, endX, endY)) in objects.items():
                 person = roi[startY:endY,startX:endX]
-                test_hist = extract_color_histogram(person)
-                result = loaded_model.predict(np.array([test_hist]))
+                if len(person) != 0:
+                    test_hist = extract_color_histogram(person)
+                    result = loaded_model.predict(np.array([test_hist]))
 
                 cX = int((startX + endX) / 2.0)
                 cY = int((startY + endY) / 2.0)
